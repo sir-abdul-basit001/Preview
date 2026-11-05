@@ -1,0 +1,148 @@
+@import "tailwindcss";
+
+/* Dashboard theme (light / dark) */
+:root {
+  --page: #faf7f2;
+  --tx: #1d1a16;
+  --card: #ffffff;
+  --mut: #6b6358;
+  --ac: #b3261e;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #16130f;
+    --tx: #f3ede3;
+    --card: #221e18;
+    --mut: #a89f90;
+    --ac: #f08a5d;
+  }
+}
+
+/*
+  Color utilities:
+  - page / tx / card / mut / ac  -> dashboard
+  - pv-bg / pv-ink / pv-a / pv-b -> restaurant preview (variables are set per restaurant inline)
+*/
+@theme inline {
+  --color-page: var(--page);
+  --color-tx: var(--tx);
+  --color-card: var(--card);
+  --color-mut: var(--mut);
+  --color-ac: var(--ac);
+  --color-pv-bg: var(--bg);
+  --color-pv-ink: var(--ink);
+  --color-pv-a: var(--a);
+  --color-pv-b: var(--b);
+}
+
+@theme {
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.35s ease-out both;
+  --animate-page: page-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-float: float 4.5s ease-in-out infinite;
+  --animate-pop: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-card-in: card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(26px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.99);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-12px) rotate(3deg);
+    }
+  }
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  @keyframes card-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 72px);
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--tx);
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  line-height: 1.5;
+  overflow-x: hidden;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+*:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
