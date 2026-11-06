@@ -1,32 +1,162 @@
-// Menu sets: "Category|emoji|Name|Description" separated by ";"
-const S = {
-  nihari:
-    "Main|🍲|Nihari|Slow cooked gravy;Main|🦴|Nalli Nihari|Bone marrow style;Bread|🫓|Naan|Fresh bread;Bread|🥖|Khameeri Roti|Soft leavened bread;Sides|🍋|Ginger and Lemon|Classic garnish;Sides|🥗|Fresh Salad|Onion and cucumber",
-  chanay:
-    "Main|🥣|Channay|Traditional breakfast bowl;Main|🍛|Mutton Channay|Rich and hearty;Bread|🫓|Kulcha|Fresh baked;Bread|🥖|Puri|Fried bread;Drinks|🍵|Doodh Patti Chai|Milky tea;Drinks|🥛|Lassi|Chilled yogurt drink",
-  halwapuri:
-    "Main|🍛|Halwa Puri Plate|Puri, channay and halwa;Main|🍲|Nihari|Slow cooked gravy;Sweet|🍯|Suji Halwa|Warm semolina sweet;Bread|🥖|Puri|Fresh fried;Drinks|🍵|Chai|Hot tea;Drinks|🥛|Lassi|Chilled yogurt drink",
-  biryani:
-    "Main|🍚|Chicken Biryani|Spiced rice and chicken;Main|🍖|Beef Biryani|Aromatic and rich;Sides|🥗|Raita|Cool yogurt;Sides|🥒|Salad|Fresh cut;Drinks|🥤|Cold Drink|Chilled",
-  haleem:
-    "Main|🥣|Haleem|Slow cooked lentils and meat;Main|🍚|Biryani|Spiced rice;Sides|🍋|Lemon and Fried Onion|Classic toppings;Sides|🥗|Raita|Cool yogurt;Bread|🫓|Naan|Fresh bread",
-  samosa:
-    "Snacks|🥟|Aloo Samosa|Crisp potato filling;Snacks|🥟|Chicken Samosa|Spiced filling;Snacks|🥙|Pakora|Fried fritters;Sides|🌶️|Imli Chutney|Sweet and tangy;Drinks|🍵|Chai|Hot tea",
-  lassi:
-    "Lassi|🥛|Sweet Lassi|Chilled and creamy;Lassi|🧂|Salted Lassi|Classic savory;Lassi|🍨|Malai Lassi|With cream;Lassi|🥭|Mango Lassi|Fruity;Drinks|🧊|Cold Drinks|Chilled",
-  dairy:
-    "Dairy|🥛|Fresh Milk|Daily dairy;Dairy|🍶|Yogurt|Set fresh;Dairy|🧈|Cream|Rich malai;Drinks|🍼|Flavored Milk|Chilled;Drinks|🥛|Lassi|Chilled",
-  sweets:
-    "Sweets|🍬|Gulab Jamun|Soft syrup sweet;Sweets|🍥|Jalebi|Crisp and sweet;Sweets|🍘|Barfi|Milk sweet;Breakfast|🍛|Halwa Puri|Morning plate;Drinks|🍵|Chai|Hot tea",
-  pathora:
-    "Main|🍛|Pathora Plate|Desi breakfast;Main|🥣|Channay|Traditional bowl;Bread|🥖|Puri|Fresh fried;Drinks|🥛|Lassi|Chilled;Drinks|🍵|Chai|Hot tea",
-  kachori:
-    "Main|🥟|Kachori|Crisp and spiced;Main|🍛|Halwa Puri|Morning plate;Sides|🥔|Aloo Curry|Savory;Drinks|🥛|Lassi|Chilled;Drinks|🍵|Chai|Hot tea",
-  general:
-    "Main|🍽️|Signature Dish|Edit after owner confirms;Main|🍛|House Special|Edit after owner confirms;Sides|🥗|Sides|Edit after owner confirms;Drinks|🥤|Drinks|Edit after owner confirms",
+// Food image URLs
+const FOOD_IMAGES = {
+  Nihari:
+    "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=900&q=85",
+
+  "Nalli Nihari":
+    "https://images.unsplash.com/photo-1544025162-d76694265947?w=900&q=85",
+
+  Channay:
+    "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=900&q=85",
+
+  "Mutton Channay":
+    "https://images.unsplash.com/photo-1544025162-d76694265947?w=900&q=85",
+
+  "Halwa Puri Plate":
+    "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=900&q=85",
+
+  "Chicken Biryani":
+    "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=900&q=85",
+
+  "Beef Biryani":
+    "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=900&q=85",
+
+  Biryani:
+    "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=900&q=85",
+
+  Haleem:
+    "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=900&q=85",
+
+  "Aloo Samosa":
+    "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=900&q=85",
+
+  "Chicken Samosa":
+    "https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?w=900&q=85",
+
+  Pakora:
+    "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=900&q=85",
+
+  Kachori:
+    "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=900&q=85",
+
+  "Pathora Plate":
+    "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=900&q=85",
+
+  "Sweet Lassi":
+    "https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=900&q=85",
+
+  "Salted Lassi":
+    "https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=900&q=85",
+
+  "Malai Lassi":
+    "https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=900&q=85",
+
+  "Mango Lassi":
+    "https://images.unsplash.com/photo-1546173159-315724a31696?w=900&q=85",
+
+  "Fresh Milk":
+    "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=900&q=85",
+
+  Yogurt:
+    "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=900&q=85",
+
+  Cream:
+    "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=900&q=85",
+
+  "Gulab Jamun":
+    "https://images.unsplash.com/photo-1666190092159-7e3b4e5f8c3b?w=900&q=85",
+
+  Jalebi:
+    "https://images.unsplash.com/photo-1601303516534-9b4e5f4d8e2c?w=900&q=85",
+
+  Barfi:
+    "https://images.unsplash.com/photo-1605197161470-5d9c4e5c7a2d?w=900&q=85",
+
+  "Signature Dish":
+    "https://images.unsplash.com/photo-1547592180-85f173990554?w=900&q=85",
+
+  "House Special":
+    "https://images.unsplash.com/photo-1544025162-d76694265947?w=900&q=85",
+
+  Sides: "https://images.unsplash.com/photo-1547592180-85f173990554?w=900&q=85",
+
+  Drinks:
+    "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=900&q=85",
 }
 
-// slug, name, phone, category, menuSet, tagline, bg, ink, accent, surface, layout(0-2), font(0-2), identity
+// General fallback images
+const DEFAULT_IMAGES = {
+  Main: "https://images.unsplash.com/photo-1547592180-85f173990554?w=900&q=85",
+
+  Bread:
+    "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=900&q=85",
+
+  Sides: "https://images.unsplash.com/photo-1547592180-85f173990554?w=900&q=85",
+
+  Drinks:
+    "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=900&q=85",
+
+  Sweet:
+    "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=900&q=85",
+
+  Sweets:
+    "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=900&q=85",
+
+  Snacks:
+    "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=900&q=85",
+
+  Dairy: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=900&q=85",
+
+  Lassi:
+    "https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=900&q=85",
+
+  Breakfast:
+    "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=900&q=85",
+}
+
+// Menu sets: Category|Name|Description
+const S = {
+  nihari:
+    "Main|Nihari|Slow cooked gravy;Main|Nalli Nihari|Bone marrow style;Bread|Naan|Fresh bread;Bread|Khameeri Roti|Soft leavened bread;Sides|Ginger and Lemon|Classic garnish;Sides|Fresh Salad|Onion and cucumber",
+
+  chanay:
+    "Main|Channay|Traditional breakfast bowl;Main|Mutton Channay|Rich and hearty;Bread|Kulcha|Fresh baked;Bread|Puri|Fried bread;Drinks|Doodh Patti Chai|Milky tea;Drinks|Lassi|Chilled yogurt drink",
+
+  halwapuri:
+    "Main|Halwa Puri Plate|Puri, channay and halwa;Main|Nihari|Slow cooked gravy;Sweet|Suji Halwa|Warm semolina sweet;Bread|Puri|Fresh fried;Drinks|Chai|Hot tea;Drinks|Lassi|Chilled yogurt drink",
+
+  biryani:
+    "Main|Chicken Biryani|Spiced rice and chicken;Main|Beef Biryani|Aromatic and rich;Sides|Raita|Cool yogurt;Sides|Salad|Fresh cut;Drinks|Cold Drink|Chilled",
+
+  haleem:
+    "Main|Haleem|Slow cooked lentils and meat;Main|Biryani|Spiced rice;Sides|Lemon and Fried Onion|Classic toppings;Sides|Raita|Cool yogurt;Bread|Naan|Fresh bread",
+
+  samosa:
+    "Snacks|Aloo Samosa|Crisp potato filling;Snacks|Chicken Samosa|Spiced filling;Snacks|Pakora|Fried fritters;Sides|Imli Chutney|Sweet and tangy;Drinks|Chai|Hot tea",
+
+  lassi:
+    "Lassi|Sweet Lassi|Chilled and creamy;Lassi|Salted Lassi|Classic savory;Lassi|Malai Lassi|With cream;Lassi|Mango Lassi|Fruity;Drinks|Cold Drinks|Chilled",
+
+  dairy:
+    "Dairy|Fresh Milk|Daily dairy;Dairy|Yogurt|Set fresh;Dairy|Cream|Rich malai;Drinks|Flavored Milk|Chilled;Drinks|Lassi|Chilled",
+
+  sweets:
+    "Sweets|Gulab Jamun|Soft syrup sweet;Sweets|Jalebi|Crisp and sweet;Sweets|Barfi|Milk sweet;Breakfast|Halwa Puri|Morning plate;Drinks|Chai|Hot tea",
+
+  pathora:
+    "Main|Pathora Plate|Desi breakfast;Main|Channay|Traditional bowl;Bread|Puri|Fresh fried;Drinks|Lassi|Chilled;Drinks|Chai|Hot tea",
+
+  kachori:
+    "Main|Kachori|Crisp and spiced;Main|Halwa Puri|Morning plate;Sides|Aloo Curry|Savory;Drinks|Lassi|Chilled;Drinks|Chai|Hot tea",
+
+  general:
+    "Main|Signature Dish|Edit after owner confirms;Main|House Special|Edit after owner confirms;Sides|Sides|Edit after owner confirms;Drinks|Drinks|Edit after owner confirms",
+}
+
+// Restaurant data
+// slug, name, phone, category, menuSet, tagline,
+// bg, ink, accent, surface, layout, font, identity
+
 const RAW = [
   [
     "kala-khan",
@@ -43,6 +173,7 @@ const RAW = [
     0,
     "Traditional, premium, heritage-inspired.",
   ],
+
   [
     "sufi-chanay",
     "Sufi Khoye Wale Chanay",
@@ -58,6 +189,7 @@ const RAW = [
     0,
     "Traditional Punjabi breakfast look.",
   ],
+
   [
     "khabay-khalifa",
     "Khabay Khalifa JEE dy",
@@ -73,6 +205,7 @@ const RAW = [
     0,
     "Authentic Pakistani branding in green and gold.",
   ],
+
   [
     "hafiz-mutton-chanay",
     "Hafiz Khoy Walay Mutton Chanay",
@@ -88,6 +221,7 @@ const RAW = [
     0,
     "Premium traditional breakfast in copper tones.",
   ],
+
   [
     "lahore-zero-kilometer",
     "Lahore 0 Kilometer",
@@ -103,6 +237,7 @@ const RAW = [
     1,
     "Modern Lahore street-food identity.",
   ],
+
   [
     "kashmir-milk",
     "Kashmir Milk Shop",
@@ -118,6 +253,7 @@ const RAW = [
     1,
     "Fresh dairy, cream and beverages.",
   ],
+
   [
     "data-nihari",
     "Data Nihari House",
@@ -133,6 +269,7 @@ const RAW = [
     0,
     "Black, deep red and gold.",
   ],
+
   [
     "zaiqa-nihari",
     "Zaiqa Nihari Stop",
@@ -148,6 +285,7 @@ const RAW = [
     1,
     "Modern street-food restaurant.",
   ],
+
   [
     "gujranwala-halwapuri",
     "Gujranwala Halwa Puri & Nihari Center",
@@ -163,6 +301,7 @@ const RAW = [
     0,
     "Golden yellow and traditional red.",
   ],
+
   [
     "al-ghani-pathora",
     "Al Ghani Pathora House",
@@ -178,6 +317,7 @@ const RAW = [
     2,
     "Earthy brown and green.",
   ],
+
   [
     "gujranwala-sweets",
     "Gujranwala Sweets & Halwa Puri",
@@ -193,6 +333,7 @@ const RAW = [
     0,
     "Pink, cream and golden accents.",
   ],
+
   [
     "karachi-biryani",
     "Karachi Biryani Center",
@@ -208,6 +349,7 @@ const RAW = [
     1,
     "Deep green with saffron.",
   ],
+
   [
     "karachi-haleem",
     "Karachi Ghota Haleem & Biryani",
@@ -223,6 +365,7 @@ const RAW = [
     1,
     "Maroon, gold and charcoal.",
   ],
+
   [
     "classic-samosa",
     "Classic Samosa Point",
@@ -238,6 +381,7 @@ const RAW = [
     1,
     "Modern Pakistani snack brand.",
   ],
+
   [
     "sheikh-lassi",
     "Sheikh Lassi Master",
@@ -253,6 +397,7 @@ const RAW = [
     2,
     "Cream, turquoise and fresh green.",
   ],
+
   [
     "billa-kachori",
     "Billa Kachori and Halwa Puri Center",
@@ -268,6 +413,7 @@ const RAW = [
     0,
     "Traditional breakfast specialist.",
   ],
+
   [
     "al-madina-milk",
     "Al Madina Milk Shop",
@@ -283,6 +429,7 @@ const RAW = [
     1,
     "White, emerald and silver.",
   ],
+
   [
     "raja-abrar",
     "Raja Abrar",
@@ -300,32 +447,48 @@ const RAW = [
   ],
 ]
 
+// Font families
 export const FONTS = [
   "Georgia, 'Times New Roman', serif",
   "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
   "'Trebuchet MS', Verdana, sans-serif",
 ]
 
+// WhatsApp message
 export const WA_MESSAGE = encodeURIComponent(
   "Assalam-o-Alaikum! I would like to know more about your menu and food items.",
 )
 
-export const restaurants = RAW.map((a) => ({
-  slug: a[0],
-  name: a[1],
-  phone: a[2],
-  category: a[3],
-  tagline: a[5],
-  bg: a[6],
-  ink: a[7],
-  accent: a[8],
-  surface: a[9],
-  layout: a[10],
-  font: a[11],
-  identity: a[12],
-  wa: "92" + a[2].replace(/\s/g, "").slice(1),
-  items: S[a[4]].split(";").map((x) => {
-    const [cat, emoji, name, desc] = x.split("|")
-    return { cat, emoji, name, desc }
-  }),
-}))
+// Create restaurant objects
+export const restaurants = RAW.map((a) => {
+  const items = S[a[4]].split(";").map((x) => {
+    const [cat, name, desc] = x.split("|")
+
+    return {
+      cat,
+      name,
+      desc,
+      image: FOOD_IMAGES[name] || DEFAULT_IMAGES[cat] || DEFAULT_IMAGES.Main,
+    }
+  })
+
+  return {
+    slug: a[0],
+    name: a[1],
+    phone: a[2],
+    category: a[3],
+    tagline: a[5],
+    bg: a[6],
+    ink: a[7],
+    accent: a[8],
+    surface: a[9],
+    layout: a[10],
+    font: a[11],
+    identity: a[12],
+
+    wa: "92" + a[2].replace(/\s/g, "").slice(1),
+
+    heroImage: items[0]?.image,
+    items,
+  }
+})

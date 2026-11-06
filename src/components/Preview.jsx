@@ -3,7 +3,6 @@ import { Link, Navigate, useParams } from "react-router-dom"
 import { FONTS, WA_MESSAGE, restaurants } from "../data/restaurants"
 import useDocumentMeta from "../hooks/useDocumentMeta"
 import Reveal from "./Reveal"
-import Lightbox from "./Lightbox"
 
 const NAV = [
   ["home", "Home"],
@@ -13,26 +12,43 @@ const NAV = [
   ["contact", "Contact"],
 ]
 
+const DEFAULT_IMAGE =
+  "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1000&q=85"
+
+const getImage = (item) => item?.image || DEFAULT_IMAGE
+
 const goTo = (id) =>
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
+  document.getElementById(id)?.scrollIntoView({
+    behavior: "smooth",
+  })
 
 const btnBase =
   "inline-block rounded-xl border-2 border-pv-a px-[18px] py-3 font-bold no-underline transition duration-200 hover:-translate-y-0.5 active:scale-95"
+
 const btn1 = `${btnBase} bg-pv-a text-pv-bg hover:brightness-110`
 const btn2 = `${btnBase} text-pv-a hover:bg-pv-a/15`
 
-function FoodCard({ item, index, single }) {
+// Food Card Component
+function FoodCard({ item, index }) {
   return (
     <div
       style={{ animationDelay: `${index * 70}ms` }}
-      className="animate-card-in group flex items-center gap-3 rounded-xl bg-pv-b p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_10px_24px_rgba(0,0,0,0.25)]"
+      className="animate-card-in group overflow-hidden rounded-xl bg-pv-b transition duration-300 hover:-translate-y-1 hover:shadow-[0_10px_24px_rgba(0,0,0,0.25)]"
     >
-      <div className="text-[2.4rem] transition-transform duration-500 group-hover:rotate-12 group-hover:scale-125">
-        {item.emoji}
+      <div className="h-[180px] overflow-hidden">
+        <img
+          src={getImage(item)}
+          alt={item.name}
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
       </div>
-      <div>
+
+      <div className="p-4">
         <h3 className="text-base font-semibold">{item.name}</h3>
-        <p className="my-0.5 text-[0.9rem] opacity-85">{item.desc}</p>
+
+        <p className="my-1.5 text-[0.9rem] opacity-85">{item.desc}</p>
+
         <em className="text-[0.8rem] font-semibold not-italic text-pv-a">
           Sample price to be confirmed
         </em>
@@ -41,19 +57,64 @@ function FoodCard({ item, index, single }) {
   )
 }
 
+// Reusable Section Component
 function Section({ id, title, children }) {
   return (
     <section id={id} className="mx-auto max-w-[1000px] px-4 py-11">
       <Reveal>
         <h2 className="mb-4 text-[1.7rem] font-bold text-pv-a">{title}</h2>
       </Reveal>
+
       <Reveal delay={100}>{children}</Reveal>
     </section>
   )
 }
 
+// Image Lightbox Component
+function ImageLightbox({ item, onClose }) {
+  if (!item) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Image of ${item.name}`}
+    >
+      <button
+        onClick={onClose}
+        aria-label="Close image"
+        className="absolute right-5 top-5 z-10 rounded-full bg-white/15 px-4 py-2 text-2xl text-white transition hover:bg-white/30"
+      >
+        &times;
+      </button>
+
+      <div
+        className="w-full max-w-[850px] overflow-hidden rounded-2xl bg-black"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img
+          src={getImage(item)}
+          alt={item.name}
+          className="max-h-[75vh] w-full object-contain"
+        />
+
+        <div className="p-4 text-center text-white">
+          <h3 className="text-lg font-semibold">{item.name}</h3>
+          {item.desc && (
+            <p className="mt-1 text-sm text-white/70">{item.desc}</p>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Main Preview Component
 export default function Preview() {
   const { slug } = useParams()
+
   const r = useMemo(() => restaurants.find((x) => x.slug === slug), [slug])
 
   const [open, setOpen] = useState(false)
@@ -70,16 +131,18 @@ export default function Preview() {
       : "18 independent website concepts for Kartarpura, Rawalpindi.",
   )
 
-  // Match the page background to the restaurant (also colors the phone safe areas)
+  // Restaurant background
   useEffect(() => {
     if (!r) return
+
     document.body.style.background = r.bg
+
     return () => {
       document.body.style.background = ""
     }
   }, [r])
 
-  // Reset local UI state when switching restaurants
+  // Reset state when switching restaurants
   useEffect(() => {
     setCat("All")
     setOpen(false)
@@ -90,21 +153,33 @@ export default function Preview() {
   useEffect(() => {
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight
+
       setProgress(max > 0 ? Math.min(window.scrollY / max, 1) : 0)
     }
+
     onScroll()
-    window.addEventListener("scroll", onScroll, { passive: true })
+
+    window.addEventListener("scroll", onScroll, {
+      passive: true,
+    })
+
     return () => window.removeEventListener("scroll", onScroll)
   }, [slug])
 
-  if (!r) return <Navigate to="/" replace />
+  if (!r) {
+    return <Navigate to="/" replace />
+  }
 
   const cats = ["All", ...new Set(r.items.map((i) => i.cat))]
+
   const visible = r.items.filter((i) => cat === "All" || i.cat === cat)
+
   const wa = `https://wa.me/${r.wa}?text=${WA_MESSAGE}`
+
   const map = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     `${r.name} Kartarpura Rawalpindi`,
   )}`
+
   const L = r.layout
 
   const handleNav = (e, id) => {
@@ -121,16 +196,20 @@ export default function Preview() {
       className="group relative font-semibold no-underline"
     >
       {label}
+
       <span className="absolute -bottom-0.5 left-0 h-0.5 w-full origin-left scale-x-0 bg-pv-a transition-transform duration-300 group-hover:scale-x-100" />
     </a>
   ))
 
+  // Hero image
+  const heroImage = r.heroImage || getImage(r.items[0])
+
+  // Hero image layout
   const bigClass = [
-    "big flex items-center justify-center border-[3px] border-pv-a bg-pv-b animate-float",
-    L === 0 &&
-      "mx-auto mb-[18px] h-[150px] w-[150px] rounded-full text-[4.5rem]",
-    L === 1 && "h-[200px] w-full rounded-3xl text-[6rem]",
-    L === 2 && "mb-4 h-[150px] w-[150px] rounded-2xl text-[4.5rem]",
+    "group overflow-hidden border-[3px] border-pv-a bg-pv-b animate-float",
+    L === 0 && "mx-auto mb-[18px] h-[150px] w-[150px] rounded-full",
+    L === 1 && "h-[200px] w-full rounded-3xl",
+    L === 2 && "mb-4 h-[150px] w-[150px] rounded-2xl",
   ]
     .filter(Boolean)
     .join(" ")
@@ -144,6 +223,9 @@ export default function Preview() {
         }
       : undefined
 
+  // Gallery images
+  const galleryItems = r.items.concat(r.items).slice(0, 6)
+
   return (
     <div
       className="min-h-screen bg-pv-bg text-pv-ink"
@@ -155,12 +237,15 @@ export default function Preview() {
         fontFamily: FONTS[r.font],
       }}
     >
-      {/* Scroll progress */}
+      {/* Scroll Progress */}
       <div
         className="fixed left-0 top-[env(safe-area-inset-top,0px)] z-[60] h-[3px] w-full origin-left bg-pv-a"
-        style={{ transform: `scaleX(${progress})` }}
+        style={{
+          transform: `scaleX(${progress})`,
+        }}
       />
 
+      {/* Demo Notice */}
       <div className="bg-pv-b px-4 py-2 text-center text-[0.85rem]">
         <Link
           to="/"
@@ -171,8 +256,10 @@ export default function Preview() {
         Demonstration preview. Not an official website until the owner approves.
       </div>
 
+      {/* Navigation */}
       <header className="sticky top-[env(safe-area-inset-top,0px)] z-40 flex flex-wrap items-center justify-between border-b border-pv-b bg-pv-bg/95 px-4 py-3 backdrop-blur">
         <b className="text-[1.1rem] text-pv-a">{r.name}</b>
+
         <button
           aria-label="Toggle menu"
           aria-expanded={open}
@@ -181,6 +268,7 @@ export default function Preview() {
         >
           {open ? "Close" : "Menu"}
         </button>
+
         <nav
           className={`flex w-full flex-col gap-3 overflow-hidden transition-all duration-300 ease-out md:max-h-none md:w-auto md:flex-row md:gap-4 md:pt-0 md:opacity-100 ${
             open ? "max-h-64 pt-3 opacity-100" : "max-h-0 pt-0 opacity-0"
@@ -190,7 +278,7 @@ export default function Preview() {
         </nav>
       </header>
 
-      {/* Hero */}
+      {/* Hero Section */}
       <section
         id="home"
         style={heroStyle}
@@ -201,8 +289,14 @@ export default function Preview() {
         }`}
       >
         <div className={bigClass} aria-hidden="true">
-          {r.items[0].emoji}
+          <img
+            src={heroImage}
+            alt={`${r.name} restaurant`}
+            fetchPriority="high"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
         </div>
+
         <div>
           <h1
             className="animate-fade-up text-[clamp(2rem,7vw,3.4rem)] font-bold leading-[1.1]"
@@ -210,14 +304,20 @@ export default function Preview() {
           >
             {r.name}
           </h1>
+
           <p
-            className={`animate-fade-up my-3 max-w-[520px] text-[1.1rem] ${L === 0 ? "mx-auto" : ""}`}
+            className={`animate-fade-up my-3 max-w-[520px] text-[1.1rem] ${
+              L === 0 ? "mx-auto" : ""
+            }`}
             style={{ animationDelay: "220ms" }}
           >
             {r.tagline}. {r.category}.
           </p>
+
           <div
-            className={`animate-fade-up mt-[18px] flex flex-wrap gap-2.5 ${L === 0 ? "justify-center" : ""}`}
+            className={`animate-fade-up mt-[18px] flex flex-wrap gap-2.5 ${
+              L === 0 ? "justify-center" : ""
+            }`}
             style={{ animationDelay: "340ms" }}
           >
             <a
@@ -227,6 +327,7 @@ export default function Preview() {
             >
               Explore Menu
             </a>
+
             <a
               href={wa}
               target="_blank"
@@ -239,6 +340,7 @@ export default function Preview() {
         </div>
       </section>
 
+      {/* Featured Section */}
       <Section title="Featured">
         <div
           className={`grid gap-3.5 ${
@@ -247,12 +349,13 @@ export default function Preview() {
               : "grid-cols-[repeat(auto-fill,minmax(210px,1fr))]"
           }`}
         >
-          {r.items.slice(0, 3).map((i, idx) => (
-            <FoodCard key={i.name} item={i} index={idx} />
+          {r.items.slice(0, 3).map((item, idx) => (
+            <FoodCard key={item.name} item={item} index={idx} />
           ))}
         </div>
       </Section>
 
+      {/* Menu Section */}
       <Section id="menu" title="Menu">
         <div className="mb-4 flex flex-wrap gap-2">
           {cats.map((c) => (
@@ -267,7 +370,7 @@ export default function Preview() {
             </button>
           ))}
         </div>
-        {/* key={cat} remounts the grid so cards animate in again on every filter change */}
+
         <div
           key={cat}
           className={`grid gap-3.5 ${
@@ -276,16 +379,22 @@ export default function Preview() {
               : "grid-cols-[repeat(auto-fill,minmax(210px,1fr))]"
           }`}
         >
-          {visible.map((i, idx) => (
-            <FoodCard key={`${i.cat}-${i.name}`} item={i} index={idx} />
+          {visible.map((item, idx) => (
+            <FoodCard
+              key={`${item.cat}-${item.name}`}
+              item={item}
+              index={idx}
+            />
           ))}
         </div>
       </Section>
 
+      {/* About Section */}
       <Section id="about" title="About">
         <p>
           {r.name} serves {r.category.toLowerCase()} in Kartarpura, Rawalpindi.
         </p>
+
         <p className="mt-3">
           This concept shows how the business could appear online. The brand
           story, history and specialities will be added only after the owner
@@ -293,33 +402,38 @@ export default function Preview() {
         </p>
       </Section>
 
+      {/* Gallery Section */}
       <Section id="gallery" title="Gallery">
         <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2.5">
-          {r.items
-            .concat(r.items)
-            .slice(0, 6)
-            .map((i, idx) => (
-              <button
-                key={idx}
-                aria-label={`View ${i.name}`}
-                onClick={() => setLightbox(i)}
-                className="group flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-pv-b to-pv-a text-5xl text-inherit transition duration-300 hover:-rotate-2 hover:scale-[1.06] hover:shadow-[0_10px_24px_rgba(0,0,0,0.3)] active:scale-95"
-              >
-                <span className="transition-transform duration-500 group-hover:scale-125">
-                  {i.emoji}
-                </span>
-              </button>
-            ))}
+          {galleryItems.map((item, idx) => (
+            <button
+              key={`${item.name}-${idx}`}
+              aria-label={`View ${item.name}`}
+              onClick={() => setLightbox(item)}
+              className="group aspect-square overflow-hidden rounded-xl bg-pv-b transition duration-300 hover:-rotate-2 hover:scale-[1.03] hover:shadow-[0_10px_24px_rgba(0,0,0,0.3)] active:scale-95"
+            >
+              <img
+                src={getImage(item)}
+                alt={item.name}
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+            </button>
+          ))}
         </div>
+
         <p className="mt-3 text-[0.85rem]">
-          Illustrative placeholders. Replace with approved photos.
+          Illustrative images. Replace with owner-approved photos.
         </p>
       </Section>
 
+      {/* Contact Section */}
       <Section id="contact" title="Contact">
         <div className="grid gap-2.5">
           <p>Phone: {r.phone} (to be verified)</p>
+
           <p>Opening hours: to be confirmed</p>
+
           <div className="mt-[18px] flex flex-wrap gap-2.5">
             <a
               href={wa}
@@ -329,9 +443,11 @@ export default function Preview() {
             >
               Chat on WhatsApp
             </a>
+
             <a href={`tel:+${r.wa}`} className={btn2}>
               Call
             </a>
+
             <a
               href={map}
               target="_blank"
@@ -344,14 +460,19 @@ export default function Preview() {
         </div>
       </Section>
 
+      {/* Footer */}
       <footer className="bg-pv-b px-4 py-6 text-center text-[0.9rem]">
         <b>{r.name}</b>
+
         <p className="my-2 flex flex-wrap justify-center gap-4">{navLinks}</p>
+
         <p>{r.phone}</p>
+
         <p>Demo preview. Content is sample material pending owner approval.</p>
       </footer>
 
-      <Lightbox item={lightbox} onClose={() => setLightbox(null)} />
+      {/* Image Lightbox */}
+      <ImageLightbox item={lightbox} onClose={() => setLightbox(null)} />
     </div>
   )
 }
