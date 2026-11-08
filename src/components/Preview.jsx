@@ -15,6 +15,18 @@ const NAV = [
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1000&q=85"
 
+const DEVELOPER = {
+  name: "Sir Abdul Basit",
+  role: "Full-Stack Web Developer",
+  description:
+    "I build responsive, modern websites and web applications for businesses.",
+  portfolio: "https://portfolio-five-drab-14.vercel.app/",
+  whatsapp: "923180102385",
+}
+
+const developerWhatsApp = (message) =>
+  `https://wa.me/${DEVELOPER.whatsapp}?text=${encodeURIComponent(message)}`
+
 const getImage = (item) => item?.image || DEFAULT_IMAGE
 
 const goTo = (id) =>
@@ -102,6 +114,7 @@ function ImageLightbox({ item, onClose }) {
 
         <div className="p-4 text-center text-white">
           <h3 className="text-lg font-semibold">{item.name}</h3>
+
           {item.desc && (
             <p className="mt-1 text-sm text-white/70">{item.desc}</p>
           )}
@@ -255,6 +268,45 @@ export default function Preview() {
         </Link>
         Demonstration preview. Not an official website until the owner approves.
       </div>
+
+      {/* Developer Introduction */}
+      <section className="border-b border-pv-b bg-pv-b/60 px-4 py-4">
+        <div className="mx-auto flex max-w-[1000px] flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
+          <div>
+            <p className="text-sm font-bold text-pv-a">
+              Website Concept by {DEVELOPER.name}
+            </p>
+
+            <p className="mt-1 text-xs opacity-75">{DEVELOPER.role}</p>
+
+            <p className="mt-1 max-w-md text-xs opacity-70">
+              {DEVELOPER.description}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-2">
+            <a
+              href={DEVELOPER.portfolio}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg border border-pv-a px-4 py-2 text-xs font-semibold text-pv-a transition hover:bg-pv-a hover:text-pv-bg"
+            >
+              My Portfolio ↗
+            </a>
+
+            <a
+              href={developerWhatsApp(
+                `Assalam-o-Alaikum! I found your ${r.name} website concept and would like to discuss a project.`,
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg bg-pv-a px-4 py-2 text-xs font-semibold text-pv-bg transition hover:brightness-110"
+            >
+              Contact Developer
+            </a>
+          </div>
+        </div>
+      </section>
 
       {/* Navigation */}
       <header className="sticky top-[env(safe-area-inset-top,0px)] z-40 flex flex-wrap items-center justify-between border-b border-pv-b bg-pv-bg/95 px-4 py-3 backdrop-blur">
@@ -460,7 +512,7 @@ export default function Preview() {
         </div>
       </Section>
 
-      {/* Footer */}
+      {/* Restaurant Footer */}
       <footer className="bg-pv-b px-4 py-6 text-center text-[0.9rem]">
         <b>{r.name}</b>
 
@@ -470,6 +522,49 @@ export default function Preview() {
 
         <p>Demo preview. Content is sample material pending owner approval.</p>
       </footer>
+
+      {/* Developer Credit */}
+      <section className="border-t border-pv-b bg-pv-bg px-4 py-8">
+        <div className="mx-auto flex max-w-[1000px] flex-col items-center justify-between gap-5 text-center sm:flex-row sm:text-left">
+          <div>
+            <p className="text-lg font-bold text-pv-a">
+              Crafted by {DEVELOPER.name}
+            </p>
+
+            <p className="mt-1 text-sm opacity-75">{DEVELOPER.role}</p>
+
+            <p className="mt-2 max-w-md text-xs opacity-70">
+              {DEVELOPER.description}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-2">
+            <a
+              href={DEVELOPER.portfolio}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={btn2}
+            >
+              Portfolio ↗
+            </a>
+
+            <a
+              href={developerWhatsApp(
+                "Assalam-o-Alaikum! I would like to discuss a website development project.",
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={btn1}
+            >
+              WhatsApp ↗
+            </a>
+          </div>
+        </div>
+
+        <p className="mt-7 text-center text-xs opacity-60">
+          © {new Date().getFullYear()} {DEVELOPER.name}. All Rights Reserved.
+        </p>
+      </section>
 
       {/* Image Lightbox */}
       <ImageLightbox item={lightbox} onClose={() => setLightbox(null)} />
